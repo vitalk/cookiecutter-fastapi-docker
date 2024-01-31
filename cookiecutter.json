@@ -1,0 +1,25 @@
+{
+    "project_name": "Name of the project",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "project_short_description": "A short description of the project",
+
+    "docker_image_prefix": "",
+    "docker_image_backend": "{{cookiecutter.docker_image_prefix}}{{cookiecutter.project_slug}}_backend",
+    "docker_image_backend_port": 5000,
+
+    "docker_image_pg": "{{cookiecutter.docker_image_prefix}}{{cookiecutter.project_slug}}_pg",
+    "docker_image_pg_port": 5432,
+
+    "pg_user": "{{cookiecutter.project_slug}}",
+    "pg_password": "{{cookiecutter.project_slug}}",
+    "pg_db": "{{cookiecutter.project_slug}}",
+    "pg_dsn": "postgresql+asyncpg://{{cookiecutter.pg_user}}:{{cookiecutter.pg_password}}@{{cookiecutter.project_slug}}_pg:5432/{{cookiecutter.pg_db}}",
+
+    "full_name": "Your name",
+    "email": "Your address email <you@example.com>",
+    "version": "0.1.0",
+
+    "_copy_without_render": [
+        "*ci.yaml"
+    ]
+}

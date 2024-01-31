@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "access": {
+      "()": "uvicorn.logging.AccessFormatter",
+      "fmt": "%(asctime)s %(levelname)s %(trace_id)s %(client_addr)s - %(request_line)s %(status_code)s",
+      "use_colors": true
+    },
+    "default": {
+      "()": "uvicorn.logging.DefaultFormatter",
+      "fmt": "%(asctime)s %(levelname)s %(trace_id)s %(client_addr)s - %(request_line)s %(status_code)s",
+      "use_colors": true
+    }
+  },
+  "filters": {
+    "trace_id": {
+      "()": "src.infra.application.setup.logging.TraceIdFilter"
+    }
+  },
+  "handlers": {
+    "access": {
+      "class": "logging.StreamHandler",
+      "formatter": "access",
+      "filters": ["trace_id"],
+      "stream": "ext://sys.stdout"
+    },
+    "default": {
+      "formatter": "default",
+      "class": "logging.StreamHandler",
+      "filters": ["trace_id"],
+      "stream": "ext://sys.stderr"
+    }
+  },
+  "loggers": {
+    "uvicorn": {
+      "handlers": ["default"],
+      "level": "DEBUG",
+      "propagate": true
+    },
+    "uvicorn.access": {
+      "handlers": ["access"],
+      "level": "INFO",
+      "propagate": false
+    },
+    "uvicorn.error": {
+      "level": "INFO",
+      "propagate": false
+    }
+  }
+}

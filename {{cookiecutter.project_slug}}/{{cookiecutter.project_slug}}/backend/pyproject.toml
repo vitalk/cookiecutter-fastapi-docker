@@ -1,0 +1,81 @@
+[tool.poetry]
+name = "{{cookiecutter.project_name}}"
+version = "{{cookiecutter.version}}"
+description = "{{cookiecutter.project_short_description}}"
+authors = ["{{cookiecutter.full_name}} <{{cookiecutter.email}}>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.101.0"
+uvicorn = {extras = ["standart"], version = "^0.27.0.post1"}
+pydantic = "^2.0"
+pydantic-settings = "^2.0.0"
+yarl = "^1.9.2"
+sentry-sdk = {extras = ["fastapi"], version = "^1.29.2"}
+alembic = "^1.8.1"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.1"}
+SQLAlchemy-Utils = "^0.38.3"
+asyncpg = "^0.28.0"
+tenacity = "^8.2.2"
+gunicorn = "^21.2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2"
+black = {version = "^19.10b0", allow-prereleases = true}
+autopep8 = "^2.0.0"
+pylint = "^2.15.8"
+ruff = "^0.1.1"
+mypy = "^1.5.0"
+pytest-asyncio = "^0.23.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--asyncio-mode=auto"
+
+[tool.black]
+line-length = 88
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+  \.toml
+  |\.sh
+  |\.git
+  |\.ini
+  |Dockerfile
+  |Jenkinfile
+)/
+'''
+
+[tool.mypy]
+warn_unused_configs = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+enable_error_code = [
+    "ignore-without-code",
+    "truthy-bool",
+]
+
+[tool.ruff.lint]
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "F",  # pyflakes
+    "N",  # pep8-naming
+    "W",  # pycodestyle
+    "B",  # flake8-bugbear
+    "G",  # flake8-logging-format
+    "T20",  # flake8-print
+    "RUF",  # ruff-specific
+    "ASYNC",  # flake8-async
+    "ISC",  # flake8-implicit-str-concat
+]
+ignore = [
+    "B008",  # function-call-in-default-argument
+]
