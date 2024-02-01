@@ -1,7 +1,8 @@
 from typing import Any, Callable
 
 from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import declarative_base
 
 
 naming_convention: dict[str, str | Callable[..., str]] = {
