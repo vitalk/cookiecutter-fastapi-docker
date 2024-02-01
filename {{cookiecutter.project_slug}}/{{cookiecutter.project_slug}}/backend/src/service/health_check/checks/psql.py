@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, UTC
 
 from sqlalchemy import text
 
@@ -32,5 +32,5 @@ class PsqlCheck(Check):
             component_id=self.component_id,
             component_type=self.component_type,
             status=check_result.name,
-            time=datetime.utcnow().isoformat(),
+            time=datetime.now(UTC).isoformat(),
         )

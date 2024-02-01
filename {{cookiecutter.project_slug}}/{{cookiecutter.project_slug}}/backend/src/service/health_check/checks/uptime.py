@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, UTC
 import time
 
 from src.service.health_check.dto import (
@@ -26,5 +26,5 @@ class UptimeCheck(Check):
             observed_value=f"{uptime:.3f}",
             observed_unit="s",
             status=healthy_status.name,
-            time=datetime.utcnow().isoformat(),
+            time=datetime.now(UTC).isoformat(),
         )

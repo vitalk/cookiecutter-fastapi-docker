@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from src.config import config
 from src.service.health_check.dto import (
@@ -18,5 +18,5 @@ class SentryCheck(Check):
             component_id=self.component_id,
             component_type=self.component_type,
             status=check_result.name,
-            time=datetime.utcnow().isoformat(),
+            time=datetime.now(UTC).isoformat(),
         )
