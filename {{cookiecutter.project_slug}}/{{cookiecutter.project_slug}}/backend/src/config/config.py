@@ -3,7 +3,7 @@ import secrets
 from typing import Self
 from typing import Literal
 
-from pydantic import AnyHttpUrl, Field, validator
+from pydantic import AnyHttpUrl, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from yarl import URL
 
@@ -42,7 +42,7 @@ class AppConfig(BaseSettings):
 
     pg_dsn: URL | None = None
 
-    @validator("pg_dsn", pre=True)
+    @field_validator("pg_dsn", mode="before")
     def coerce_pg_dsn_to_yarl_url(cls, value: str | None) -> URL | None:  # noqa: N805
         return URL(value) if value else None
 
@@ -53,7 +53,7 @@ class AppConfig(BaseSettings):
     sentry_dsn: URL | None = None
     sentry_debug_path: str | None = None
 
-    @validator("sentry_dsn", pre=True)
+    @field_validator("sentry_dsn", mode="before")
     def coerce_sentry_dsn_to_yarl_url(cls, value: str) -> URL | None:  # noqa: N805
         return URL(value) if value else None
 
