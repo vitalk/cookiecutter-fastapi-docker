@@ -14,6 +14,7 @@
     "pg_password": "{{cookiecutter.project_slug}}",
     "pg_db": "{{cookiecutter.project_slug}}",
     "pg_dsn": "postgresql+asyncpg://{{cookiecutter.pg_user}}:{{cookiecutter.pg_password}}@{{cookiecutter.project_slug}}_pg:5432/{{cookiecutter.pg_db}}",
+    "test_pg_dsn": "{{cookiecutter.pg_dsn}}_test",
 
     "full_name": "Your name",
     "email": "Your address email <you@example.com>",

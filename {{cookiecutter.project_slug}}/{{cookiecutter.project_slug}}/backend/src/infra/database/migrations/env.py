@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from src.config import config as _config
+from src.config import config as app_config
 from src.infra.database.declarative_base import metadata
 from src.infra.database.models import *  # noqa: F403
 
@@ -23,7 +23,8 @@ if config.config_file_name is not None:
 target_metadata = metadata
 
 
-config.set_main_option("sqlalchemy.url", str(_config.pg_dsn))
+if not config.get_main_option("sqlalchemy.url"):
+    config.set_main_option("sqlalchemy.url", str(app_config.pg_dsn))
 
 
 def run_migrations_offline() -> None:
@@ -38,9 +39,8 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=config.get_main_option("sqlalchemy.url"),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},

@@ -40,6 +40,22 @@ Documentation available on
 > <http://localhost:5000/docs>
 
 
+Testing
+-------
+
+Create database for your test suite
+
+```
+docker-compose run pg psql -U {{cookiecutter.pg_user}} -h {{cookiecutter.docker_image_pg}} {{cookiecutter.pg_db}} -c 'create database {{cookiecutter.pg_db}}_test'
+```
+
+Update `.env` if needed to use correct `TEST_PG_DSN`
+
+```
+pytest
+```
+
+
 Project structure
 -----------------
 
