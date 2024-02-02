@@ -14,7 +14,7 @@ from src.service.health_check.service import (
 
 
 @dataclass
-class PsqlCheck(Check):
+class PgCheck(Check):
     component_type: CheckComponentType = CheckComponentType.datastore
 
     async def __call__(self) -> CheckResult:

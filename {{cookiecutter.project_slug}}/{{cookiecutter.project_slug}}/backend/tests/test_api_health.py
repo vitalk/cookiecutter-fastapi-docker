@@ -35,4 +35,4 @@ class TestHealthReadinessProbe(BaseTestCase):
         given_json = res.json()
         assert given_json["status"] == "warn"
         assert given_json["version"] == test_app_config.app_version
-        assert given_json["checks"]["psql:online"]
+        assert given_json["checks"]["pg:online"]
