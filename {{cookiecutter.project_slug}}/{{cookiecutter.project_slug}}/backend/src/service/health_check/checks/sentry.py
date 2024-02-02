@@ -1,11 +1,8 @@
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from src.config import config
-from src.service.health_check.dto import (
-    Check,
-    CheckResult,
-)
-from src.service.health_check.service import healthy_status, warn_status
+from src.service.health_check.dto import CheckResult
+from src.service.health_check.service import Check, healthy_status, warn_status
 
 
 class SentryCheck(Check):

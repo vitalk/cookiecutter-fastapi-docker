@@ -1,16 +1,16 @@
 from dataclasses import dataclass
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from sqlalchemy import text
 
 from src.infra.database.session import async_session
-from src.service.health_check.dto import (
+from src.service.health_check.dto import CheckComponentType, CheckResult
+from src.service.health_check.service import (
     Check,
-    CheckComponentType,
-    CheckResult,
-    Status,
+    ProbeResultStatus,
+    fail_status,
+    healthy_status,
 )
-from src.service.health_check.service import fail_status, healthy_status
 
 
 @dataclass
@@ -18,7 +18,7 @@ class PsqlCheck(Check):
     component_type: CheckComponentType = CheckComponentType.datastore
 
     async def __call__(self) -> CheckResult:
-        check_result: Status
+        check_result: ProbeResultStatus
 
         try:
             async with async_session() as session:

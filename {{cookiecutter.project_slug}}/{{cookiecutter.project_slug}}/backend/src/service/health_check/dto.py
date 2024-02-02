@@ -76,8 +76,6 @@ Example Output:
     }
 
 """
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Any
@@ -89,12 +87,6 @@ class CheckComponentType(str, Enum):
     component = "component"
     datastore = "datastore"
     system = "system"
-
-
-@dataclass(frozen=True)
-class Status:
-    code: int
-    name: str
 
 
 class Base(BaseModel):
@@ -151,25 +143,3 @@ class HealthOut(Base):
         default=None,
         description="Provides health status of logical downstream dependency or sub-component",
     )
-
-
-@dataclass
-class Check(ABC):
-    component_id: str
-    component_type: CheckComponentType = CheckComponentType.component
-
-    @abstractmethod
-    async def __call__(self) -> CheckResult:
-        raise NotImplementedError
-
-
-@dataclass(frozen=True)
-class Probe:
-    name: str
-    checks: list[Check]
-
-
-@dataclass(frozen=True)
-class ProbeResult:
-    status: Status
-    checks: dict[str, list[CheckResult]]

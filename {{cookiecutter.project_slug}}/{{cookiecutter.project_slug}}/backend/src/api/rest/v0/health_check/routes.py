@@ -6,8 +6,8 @@ from fastapi.responses import JSONResponse
 
 from src.config import config
 from src.service.health_check.checks import psql, sentry, uptime
-from src.service.health_check.dto import HealthOut, ProbeResult
-from src.service.health_check.service import HealthCheckService, Probe
+from src.service.health_check.dto import HealthOut
+from src.service.health_check.service import HealthCheckService, Probe, ProbeResult
 
 
 logger = logging.getLogger(__name__)

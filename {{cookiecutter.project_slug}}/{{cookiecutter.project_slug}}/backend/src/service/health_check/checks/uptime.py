@@ -1,13 +1,9 @@
 from dataclasses import dataclass
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 import time
 
-from src.service.health_check.dto import (
-    Check,
-    CheckComponentType,
-    CheckResult,
-)
-from src.service.health_check.service import healthy_status
+from src.service.health_check.dto import CheckComponentType, CheckResult
+from src.service.health_check.service import Check, healthy_status
 
 
 @dataclass
