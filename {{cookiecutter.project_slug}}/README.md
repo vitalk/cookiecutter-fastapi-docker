@@ -44,7 +44,7 @@ Swagger Documentation
 
 Documentation available on
 
-> <http://localhost:5000/docs>
+> <http://localhost:{{cookiecutter.docker_image_backend_port}}/docs>
 
 
 Testing
