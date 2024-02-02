@@ -10,6 +10,7 @@ What's inside?
 Well-organized FastAPI project with:
 - PostgreSQL integration using SQLAlchemy and Alembic
 - Health checks with Liveness and Readiness probes implemented
+- Pytest with [Stairway test](https://habr.com/ru/companies/yandex/articles/511892/) implemented
 - Sentry integration
 - Tracing enabled
 - Docker

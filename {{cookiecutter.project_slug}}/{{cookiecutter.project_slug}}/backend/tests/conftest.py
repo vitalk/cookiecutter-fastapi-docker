@@ -1,5 +1,3 @@
-import os
-
 import alembic.command
 import alembic.config
 from fastapi.testclient import TestClient
@@ -9,23 +7,17 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from src.config import AppConfig
 from src.infra.application.factory import app_factory
 from src.infra.database.session import async_session, get_session
+from tests.base import get_test_app_config, get_test_alembic_config
 
 
 @pytest.fixture(scope="session")
 def test_app_config() -> AppConfig:
-    return AppConfig(
-        pg_dsn=os.getenv("TEST_PG_DSN"),
-    )
+    return get_test_app_config()
 
 
 @pytest.fixture(scope="session")
 def test_alembic_config(test_app_config: AppConfig) -> alembic.config.Config:
-    alembic_config = alembic.config.Config("alembic.ini")
-    alembic_config.set_main_option(
-        "sqlalchemy.url",
-        str(test_app_config.pg_dsn),
-    )
-    return alembic_config
+    return get_test_alembic_config(test_app_config)
 
 
 @pytest.fixture(autouse=True, scope="session")

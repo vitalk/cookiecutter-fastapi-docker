@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
 from src.config import AppConfig
-from tests.base_test_case import BaseTestCase
+from tests.base import BaseTestCase
 
 
 class TestHealthLivenessProbe(BaseTestCase):
