@@ -24,6 +24,13 @@ cp {{cookiecutter.project_slug}}/pg/{example.env,.env}
 docker-compose up
 ```
 
+It's possible to install `dev` dependencies via `--build-arg POETRY_INSTALL_DEV=true`
+
+```
+docker-compose build --build-arg "POETRY_INSTALL_DEV=true"
+docker-compose up
+```
+
 Run a command inside the docker container:
 
 ```bash
@@ -49,10 +56,16 @@ Create database for your test suite
 docker-compose run pg psql -U {{cookiecutter.pg_user}} -h {{cookiecutter.docker_image_pg}} {{cookiecutter.pg_db}} -c 'create database {{cookiecutter.pg_db}}_test'
 ```
 
-Update `.env` if needed to use correct `TEST_PG_DSN`
+Update `.env` to use correct `TEST_PG_DSN` if needed
 
 ```
-pytest
+docker-compose run --rm backend pytest
+```
+
+To run Ruff as a linter
+
+```
+docker-compose run --rm backend ruff check .
 ```
 
 

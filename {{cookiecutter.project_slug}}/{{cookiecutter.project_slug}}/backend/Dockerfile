@@ -9,8 +9,8 @@ RUN pip install -U pip && \
     pip install poetry && \
     poetry config virtualenvs.create false
 
-ARG install_dev=false
-RUN if [ "$INSTALL_DEV" = "true" ]; then poetry install --with dev ; else poetry install --only main ; fi
+ARG POETRY_INSTALL_DEV=false
+RUN if [ "$POETRY_INSTALL_DEV" = "true" ]; then poetry install --with dev ; else poetry install --only main ; fi
 
 COPY ./src /{{cookiecutter.project_slug}}/src
 

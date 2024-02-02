@@ -7,14 +7,13 @@ services:
     build:
       context: ./{{cookiecutter.project_slug}}/backend
       dockerfile: ./Dockerfile
-      args:
-        INSTALL_DEV: ${INSTALL_DEV-false}
     ports:
       - {{cookiecutter.docker_image_backend_port}}:8000
     env_file:
       - {{cookiecutter.project_slug}}/backend/.env
     volumes:
       - ./{{cookiecutter.project_slug}}/backend/src:/{{cookiecutter.project_slug}}/src
+      - ./{{cookiecutter.project_slug}}/backend/tests:/{{cookiecutter.project_slug}}/tests
       - ./{{cookiecutter.project_slug}}/uvicorn/config.json:/{{cookiecutter.project_slug}}/uvicorn/config.json:ro
     depends_on:
       - pg
