@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from starlette.types import ASGIApp
 
 from src.api.rest.v0.routes import api_v0_router
+from src.api.rest.v1.routes import api_v1_router
 from src.config import AppConfig
 from src.infra.application.setup.cors import setup_cors_middleware
 from src.infra.application.setup.logging import setup_logging
@@ -40,7 +41,7 @@ def app_factory(config: AppConfig) -> ASGIApp:
             config.openapi_url,
         )
 
-    app = FastAPI(**app_props)
+    app = FastAPI(**app_props)  # type: ignore[arg-type]
 
     logger.info("setup sentry")
     setup_sentry(app, config)
@@ -59,6 +60,11 @@ def app_factory(config: AppConfig) -> ASGIApp:
     app.include_router(
         api_v0_router,
         prefix="/api/0",
+    )
+
+    app.include_router(
+        api_v1_router,
+        prefix="/api/1",
     )
 
     logger.info("app is ready")

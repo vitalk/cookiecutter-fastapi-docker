@@ -66,3 +66,7 @@ class AppConfig(BaseSettings):
             new_config[prop] = value
 
         return type(self)(**new_config)
+
+    jwt_exp: int = 5
+    jwt_algorithm: str = "HS256"
+    jwt_secret: str = secret_key

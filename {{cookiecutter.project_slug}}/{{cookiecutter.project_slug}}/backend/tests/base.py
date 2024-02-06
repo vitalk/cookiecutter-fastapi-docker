@@ -6,8 +6,8 @@ from src.config import AppConfig
 
 
 def get_test_app_config() -> AppConfig:
-    return AppConfig(
-        pg_dsn=os.getenv("TEST_PG_DSN"),
+    return AppConfig(  # type: ignore[call-arg]
+        pg_dsn=os.getenv("TEST_PG_DSN"),  # type: ignore[arg-type]
     )
 
 

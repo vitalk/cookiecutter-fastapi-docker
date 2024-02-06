@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, TypeVar
 
 from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declared_attr
@@ -28,3 +28,6 @@ class Base(declarative_base(metadata=metadata)):  # type: ignore[misc]
     @declared_attr  # type: ignore[arg-type]
     def __tablename__(cls) -> str:  # noqa: N805
         return cls.__name__.lower()
+
+
+OrmModel = TypeVar("OrmModel", bound=Base)

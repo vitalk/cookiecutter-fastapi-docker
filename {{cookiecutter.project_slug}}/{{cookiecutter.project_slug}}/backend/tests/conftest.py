@@ -20,7 +20,7 @@ def test_alembic_config(test_app_config: AppConfig) -> alembic.config.Config:
     return get_test_alembic_config(test_app_config)
 
 
-@pytest.fixture(autouse=True, scope="session")
+@pytest.fixture(autouse=True)
 def auto_prune_database(test_alembic_config: alembic.config.Config):
     alembic.command.upgrade(test_alembic_config, revision="head")
     yield
