@@ -82,16 +82,16 @@ class AuthService:
             "trying to authenticate user by email: email=%s",
             auth_in.email,
         )
-        maybe_user = await self.user_repo.get_user_by_email(
+        either_user_or_err = await self.user_repo.get_user_by_email(
             session=session,
             email=auth_in.email,
         )
-        match maybe_user:
+        match either_user_or_err:
             case Result(None, NotFoundError()):
                 logger.info("given user not found: email=%s", auth_in.email)
                 return Result.fail(InvalidCredentialError())
 
-        user_found = cast(User, maybe_user.value)
+        user_found = cast(User, either_user_or_err.value)
         logger.info("user found: user_id=%s", user_found.user_id)
 
         if not self.check_password(
@@ -138,13 +138,13 @@ class AuthService:
         auth_in: AuthIn,
     ) -> Result[UserOut, EmailTakenError]:
         logger.info("check user email is not taken: email=%s", auth_in.email)
-        maybe_user = await self.user_repo.get_user_by_email(
+        either_user_or_err = await self.user_repo.get_user_by_email(
             session=session,
             email=auth_in.email,
             with_for_update=True,
         )
 
-        match maybe_user:
+        match either_user_or_err:
             case Result(user_record, None):  # noqa: F841
                 logger.info(
                     "unable to create a new user: the given email %s is already taken",
@@ -159,7 +159,7 @@ class AuthService:
         hashed_password = self.hash_password(password=auth_in.password)
 
         logger.info("create a new user: email=%s", auth_in.email)
-        maybe_new_user = await self.user_repo.create_user(
+        either_new_user_or_err = await self.user_repo.create_user(
             session=session,
             user_in=UserIn(
                 email=auth_in.email,
@@ -167,7 +167,7 @@ class AuthService:
             ),
         )
 
-        match maybe_new_user:
+        match either_new_user_or_err:
             case Result(new_user, None):
                 new_user = cast(User, new_user)
                 logger.info(
@@ -181,7 +181,7 @@ class AuthService:
             case _:
                 logger.info(
                     "unable to create a new user: %s",
-                    str(maybe_new_user.error),
+                    str(either_new_user_or_err.error),
                 )
                 return Result.fail(
                     EmailTakenError(

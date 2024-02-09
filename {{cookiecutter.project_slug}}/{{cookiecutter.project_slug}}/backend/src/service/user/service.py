@@ -24,12 +24,12 @@ class UserService:
         user_id: uuid.UUID,
     ) -> Result[UserOut, NotFoundError]:
         logger.info("get user by user_id %s", user_id)
-        maybe_user = await self.user_repo.get_user_by_id(
+        either_user_or_err = await self.user_repo.get_user_by_id(
             session=session,
             user_id=user_id,
         )
 
-        match maybe_user:
+        match either_user_or_err:
             case Result(user_found, None):
                 return Result.ok(
                     UserOut.model_validate(user_found),
