@@ -14,7 +14,7 @@ from tenacity import (
     wait_fixed,
 )
 
-from src.infra.database.session import async_session
+from src.infra.database.session import async_session_factory
 
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ wait_seconds: Final[int] = 1
 )
 async def wait_for_deps() -> None:
     try:
-        async with async_session() as session:
+        async with async_session_factory() as session:
             await session.execute(text("select true"))
     except Exception as exc:
         logger.error(exc)

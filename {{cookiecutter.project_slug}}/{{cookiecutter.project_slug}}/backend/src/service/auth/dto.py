@@ -3,14 +3,15 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr
 
 
-class AuthIn(BaseModel):
+class AccessTokenInDto(BaseModel):
     email: EmailStr
     password: str
 
 
-class JWTPayload(BaseModel):
+class JWTPayloadDto(BaseModel):
     user_id: UUID
 
 
-class AuthOut(JWTPayload):
+class AccessTokenOutDto(BaseModel):
     access_token: str
+    user_id: UUID

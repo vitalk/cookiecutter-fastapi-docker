@@ -9,6 +9,9 @@ from src.config import AppConfig
 from src.infra.application.setup.cors import setup_cors_middleware
 from src.infra.application.setup.logging import setup_logging
 from src.infra.application.setup.sentry import setup_sentry
+from src.infra.application.setup.sqlalchemy_scoped_session import (
+    setup_sqlalchemy_scoped_session,
+)
 from src.infra.application.setup.tracing import setup_tracing_middleware
 
 
@@ -56,6 +59,7 @@ def app_factory(config: AppConfig) -> ASGIApp:
 
     setup_cors_middleware(app, config)
     setup_tracing_middleware(app, config)
+    setup_sqlalchemy_scoped_session(app)
 
     app.include_router(
         api_v0_router,

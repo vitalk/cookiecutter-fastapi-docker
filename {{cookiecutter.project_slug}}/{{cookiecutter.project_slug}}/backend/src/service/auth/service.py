@@ -6,19 +6,21 @@ import bcrypt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 import jwt
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import config
 from src.infra.application.exception import NotFoundError
 from src.infra.application.result import Result
 from src.infra.database.models import User
-from src.infra.database.session import AsyncSession
-from src.service.auth.dto import AuthIn, AuthOut, JWTPayload
+from src.service.auth.dto import (
+    AccessTokenInDto,
+    AccessTokenOutDto,
+    JWTPayloadDto,
+)
 from src.service.auth.exception import (
-    EmailTakenError,
     InvalidCredentialError,
     InvalidTokenError,
 )
-from src.service.user.dto import UserIn, UserOut
 from src.service.user.repository import UserRepository
 
 
@@ -34,7 +36,7 @@ class AuthService:
     async def check_jwt_token(
         *,
         token: str = Depends(oauth2_scheme),
-    ) -> Result[JWTPayload, InvalidTokenError]:
+    ) -> Result[JWTPayloadDto, InvalidTokenError]:
         if not token:
             logger.debug("no jwt token is given, abort mission")
             return Result.fail(InvalidTokenError())
@@ -53,7 +55,7 @@ class AuthService:
             return Result.fail(InvalidTokenError(str(err)))
 
         return Result.ok(
-            JWTPayload(
+            JWTPayloadDto(
                 user_id=jwt_payload["sub"],
             )
         )
@@ -76,39 +78,39 @@ class AuthService:
         self,
         *,
         session: AsyncSession,
-        auth_in: AuthIn,
-    ) -> Result[AuthOut, InvalidCredentialError]:
+        access_token_in: AccessTokenInDto,
+    ) -> Result[AccessTokenOutDto, InvalidCredentialError]:
         logger.info(
             "trying to authenticate user by email: email=%s",
-            auth_in.email,
+            access_token_in.email,
         )
-        either_user_or_err = await self.user_repo.get_user_by_email(
+        user_or_err = await self.user_repo.get_user_by_email(
             session=session,
-            email=auth_in.email,
+            email=access_token_in.email,
         )
-        match either_user_or_err:
+        match user_or_err:
             case Result(None, NotFoundError()):
-                logger.info("given user not found: email=%s", auth_in.email)
+                logger.info("given user not found: email=%s", access_token_in.email)
                 return Result.fail(InvalidCredentialError())
 
-        user_found = cast(User, either_user_or_err.value)
+        user_found = cast(User, user_or_err.value)
         logger.info("user found: user_id=%s", user_found.user_id)
 
         if not self.check_password(
-            password=auth_in.password,
-            password_in_db=user_found.password,
+            password=access_token_in.password,
+            hashed_password=user_found.password,
         ):
             logger.info(
                 "password missmatch for user: user_id=%s given password=%s",
                 user_found.user_id,
-                auth_in.password,
+                access_token_in.password,
             )
             return Result.fail(InvalidCredentialError())
 
         access_token = self.create_access_token(user=user_found)
 
         return Result.ok(
-            AuthOut(
+            AccessTokenOutDto(
                 user_id=user_found.user_id,
                 access_token=access_token,
             )
@@ -118,10 +120,10 @@ class AuthService:
         self,
         *,
         password: str,
-        password_in_db: bytes,
+        hashed_password: bytes,
     ) -> bool:
         password_bytes = bytes(password, "utf-8")
-        return bcrypt.checkpw(password_bytes, password_in_db)
+        return bcrypt.checkpw(password_bytes, hashed_password)
 
     def hash_password(
         self,
@@ -130,61 +132,3 @@ class AuthService:
     ) -> bytes:
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode(), salt)
-
-    async def create_user(
-        self,
-        *,
-        session: AsyncSession,
-        auth_in: AuthIn,
-    ) -> Result[UserOut, EmailTakenError]:
-        logger.info("check user email is not taken: email=%s", auth_in.email)
-        either_user_or_err = await self.user_repo.get_user_by_email(
-            session=session,
-            email=auth_in.email,
-            with_for_update=True,
-        )
-
-        match either_user_or_err:
-            case Result(user_record, None):  # noqa: F841
-                logger.info(
-                    "unable to create a new user: the given email %s is already taken",
-                    auth_in.email,
-                )
-                return Result.fail(
-                    EmailTakenError(
-                        "unable to create a new user: the given email is already taken"
-                    )
-                )
-
-        hashed_password = self.hash_password(password=auth_in.password)
-
-        logger.info("create a new user: email=%s", auth_in.email)
-        either_new_user_or_err = await self.user_repo.create_user(
-            session=session,
-            user_in=UserIn(
-                email=auth_in.email,
-                password=hashed_password,
-            ),
-        )
-
-        match either_new_user_or_err:
-            case Result(new_user, None):
-                new_user = cast(User, new_user)
-                logger.info(
-                    "new user created with user_id %s",
-                    new_user.user_id,
-                )
-                return Result.ok(
-                    UserOut.model_validate(new_user),
-                )
-
-            case _:
-                logger.info(
-                    "unable to create a new user: %s",
-                    str(either_new_user_or_err.error),
-                )
-                return Result.fail(
-                    EmailTakenError(
-                        "unable to create a new user: the given email is already taken"
-                    )
-                )

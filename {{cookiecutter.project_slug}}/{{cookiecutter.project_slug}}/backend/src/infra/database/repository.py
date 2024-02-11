@@ -3,11 +3,11 @@ from typing import Any, Generic, Type, final
 
 from sqlalchemy import insert, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.infra.application.exception import BadRequestError, NotFoundError
 from src.infra.application.result import Result
 from src.infra.database.declarative_base import OrmModel
-from src.infra.database.session import AsyncSession
 
 
 class GenericRepository(abc.ABC, Generic[OrmModel]):
@@ -67,9 +67,10 @@ class GenericRepository(abc.ABC, Generic[OrmModel]):
 
         try:
             query_result = await session.execute(insert_query)
-            await session.commit()
         except IntegrityError as err:
-            return Result.fail(BadRequestError(str(err)))
+            return Result.fail(
+                BadRequestError(str(err)),
+            )
 
         return Result.ok(
             query_result.scalars().one(),

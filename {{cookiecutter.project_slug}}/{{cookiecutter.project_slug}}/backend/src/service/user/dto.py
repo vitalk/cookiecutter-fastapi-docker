@@ -7,12 +7,12 @@ class OrmBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserIn(BaseModel):
+class UserInDto(BaseModel):
     user_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     email: EmailStr
-    password: bytes
+    password: str
 
 
-class UserOut(OrmBase):
+class UserOutDto(OrmBase):
     user_id: uuid.UUID
     email: EmailStr

@@ -11,9 +11,5 @@ class InvalidCredentialError(AuthServiceError):
     ...
 
 
-class EmailTakenError(AuthServiceError):
-    ...
-
-
 class InvalidTokenError(InvalidCredentialError):
     status_code = status.HTTP_401_UNAUTHORIZED

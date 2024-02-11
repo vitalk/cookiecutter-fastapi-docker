@@ -5,7 +5,6 @@ from src.infra.application.result import Result
 from src.infra.database.models import User
 from src.infra.database.repository import GenericRepository
 from src.infra.database.session import AsyncSession
-from src.service.user.dto import UserIn
 
 
 class UserRepository(GenericRepository[User]):
@@ -41,9 +40,13 @@ class UserRepository(GenericRepository[User]):
         self,
         *,
         session: AsyncSession,
-        user_in: UserIn,
+        user_id: uuid.UUID,
+        email: str,
+        password: bytes,
     ) -> Result[User, BadRequestError]:
         return await self.create_record(
             session=session,
-            **user_in.model_dump(),
+            user_id=user_id,
+            email=email,
+            password=password,
         )

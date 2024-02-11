@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy import text
 
-from src.infra.database.session import async_session
+from src.infra.database.session import async_session_factory
 from src.service.health_check.dto import CheckComponentType, CheckResult
 from src.service.health_check.service import (
     Check,
@@ -21,7 +21,7 @@ class PgCheck(Check):
         check_result: ProbeResultStatus
 
         try:
-            async with async_session() as session:
+            async with async_session_factory() as session:
                 await session.execute(text("select true"))
         except:  # noqa: E722
             check_result = fail_status
